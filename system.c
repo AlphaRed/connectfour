@@ -11,7 +11,7 @@ int initWindow()
         return 1;
     }
     else
-        window = SDL_CreateWindow("Beverley", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        window = SDL_CreateWindow("Connect Four", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     return 0;
 }
 
@@ -94,44 +94,6 @@ int calculateFPS(int currentTicks)
         fps = 1000 / deltaTicks;
     }
     return fps;
-}
-
-// In this file for now, will move it elsewhere eventually
-
-FILE *openTextFile(char *filename)
-{
-    FILE *f = fopen(filename, "r");
-
-    if(f == NULL)
-    {
-        printf("Failed to load text file, %s\n", filename);
-        return NULL;
-    }
-    else
-        return f;
-}
-
-int loadTextFile(FILE *f, TextStruct *t)
-{
-    char tempLoad[MAX_CHARS] = {0};
-    char num[5] = {0};
-    
-    fgets(num, 5, f);
-    t->string1Len = strtol(num, NULL, 10);
-    //printf("Length1: %d\n", t->string1Len);
-    fgets(t->string1, MAX_CHARS, f);
-    //printf("String1: %s\n", t->string1);
-    fgets(num, 5, f);
-    t->string2Len = strtol(num, NULL, 10);
-    //printf("Length2: %d\n", t->string2Len);
-    fgets(t->string2, MAX_CHARS, f);
-    //printf("String2: %s\n", t->string2);
-    return 0;
-}
-
-void closeTextFile(FILE *f)
-{
-    fclose(f);
 }
 
 void loadResources()

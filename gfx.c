@@ -66,11 +66,11 @@ void setupFontTiles(SDL_Rect f[], int num)
 }
 
 // TO DO: move with other text related functions to new file
-void drawString(char *string, int y) // this can possibly be discarded...
+void drawString(char *string, int x, int y)
 {
     // only draw a string max length of 40 characters! (1,280 res width / (8 * 4) don't forget the upscale of 4x
     // technically can be drawn closer due to the way I've drawn the pixel art!
-    int x = 0;
+    //int x = 0;
     int len = strlen(string);
     if(len > MAX_LEN)
         len = MAX_LEN; // max out at 40
@@ -109,82 +109,6 @@ void drawFPS(int fps)
     }   
 }
 
-// TO DO: move with other text related functions to new file
-void drawAnimatedLine(LineStruct *L, int currentTicks, CursorStruct *C)
-{
-    int drawX = L->x;
-    for(int i = 0; i < L->currentFrame; i++)
-    {
-        char c = L->string[i];
-        drawLetter(c, drawX, L->y, L->s);
-        if(c == 'i')
-            drawX += ((FONT_WIDTH - 4) * L->s); // more for i...maybe l?
-        else
-            drawX += ((FONT_WIDTH - 2) * L->s); // Minus two for distancing...kerning(?)            
-    }
-    int deltaTicks = currentTicks - L->lastTick;
-    if(deltaTicks > L->delay)
-    {
-        L->currentFrame++;
-        if(L->currentFrame > L->length)
-            L->currentFrame = L->length; // prevent out of bounds
-        L->lastTick = currentTicks;
-        C->x += ((FONT_WIDTH - 2) * L->s);
-        if(C->x > drawX)
-            C->x = drawX;
-    }
-}
-
-// TO DO: move with other text related functions to new file
-void drawCursor(CursorStruct *C, int currentTicks) // TO DO: add a function for changing location of cursor
-{
-    char c;
-    if(C->currentFrame == 1)
-        c = C->c2;
-    else
-        c = C->c1;
-    drawLetter(c, C->x, C->y, C->s);
-    int deltaTicks = currentTicks - C->lastTick;
-    if(deltaTicks > C->delay)
-    {
-        C->currentFrame++;
-        if(C->currentFrame > 1)
-            C->currentFrame = 0; // I think there's a better way to do this but whatever
-        C->lastTick = currentTicks;
-    }
-}
-
-// TO DO: move with other text related functions to new file
-void drawParagraph(TextStruct *T, int currentTicks, CursorStruct *C)
-{
-    int drawX = 10;
-    int drawY = 10;
-    int scale = 4;
-    int delay = 450;
-
-    for(int i = 0; i <= T->currentLetter; i++)
-    {
-        char c = T->string1[i];
-        drawLetter(c, drawX, drawY, scale);
-        if(c == 'i')
-            drawX += ((FONT_WIDTH - 4) * scale); // more for i...maybe l?
-        else
-            drawX += ((FONT_WIDTH - 2) * scale); // Minus two for distancing...kerning(?)
-    }
-                 
-    int deltaTicks = currentTicks - T->lastTick;
-    if(deltaTicks > delay)
-    {
-        T->currentLetter++;
-        if(T->currentLetter > T->string1Len)
-            T->currentLetter = T->string1Len;
-        T->lastTick = currentTicks;
-        C->x += ((FONT_WIDTH - 2) * scale);
-        if(C->x > drawX)
-            C->x = drawX;
-    }
-}
-
 void drawTile(SDL_Texture *t, int index, int x, int y, int s)
 {
     SDL_Rect destRect;
@@ -207,23 +131,53 @@ void drawBoard(SDL_Texture *t)
             drawTile(t, 0, (j * TILE_SIZE * TILE_SCALE) + xOffset, (i * TILE_SIZE * TILE_SCALE) + yOffset, TILE_SCALE);
         }
     }
+
+    for(int i = 0; i < MAX_ROWS; i++)
+    {
+        drawTile(t, 5, (0 * TILE_SIZE * TILE_SCALE) + xOffset - 30, (i * TILE_SIZE * TILE_SCALE) + yOffset, TILE_SCALE);
+        drawTile(t, 5, (0 * TILE_SIZE * TILE_SCALE) + xOffset + 220, (i * TILE_SIZE * TILE_SCALE) + yOffset, TILE_SCALE);
+    }
 }
 
-void drawMapCursor(int x, int y, int offsetX, int offsetY, SDL_Texture *img)
+void drawMenu(SDL_Texture *t)
 {
-    int h = heightMap[x][y];
-    int cx = (x - y) * 64 + offsetX;
-    int cy = (x + y) * 32 + offsetY - (TILE_SIZE * 2 * h);
-    blitImage(img, cx, cy, TILE_SIZE, TILE_SIZE, 4);
+    drawString("Connect Four", 50, 20);
+    drawString("Start", 50, 300);
+    drawString("Exit", 50, 350);
+
+    // draw the board for show!
+    int xOffset = 150;
+    int yOffset = 80;
+    for(int i = 0; i < MAX_ROWS; i++)
+    {
+        for(int j = 0; j < MAX_COLUMNS; j++)
+        {
+            drawTile(t, 0, (j * TILE_SIZE * TILE_SCALE) + xOffset, (i * TILE_SIZE * TILE_SCALE) + yOffset, TILE_SCALE);
+        }
+    }
+    // draw pieces for show!
+    int pieceIndex = 1;
+    for(int i = 0; i < MAX_ROWS; i++)
+    {
+        for(int j = 0; j < MAX_COLUMNS; j++)
+        {
+            drawTile(t, pieceIndex, (j * TILE_SIZE * TILE_SCALE) + xOffset, (i * TILE_SIZE * TILE_SCALE) + yOffset, TILE_SCALE);
+            
+            if(pieceIndex == 1)
+                pieceIndex = 2;
+            else
+                pieceIndex = 1;
+        }
+    }
+    // draw the sides for show!
+    for(int i = 0; i < MAX_ROWS; i++)
+    {
+        drawTile(t, 5, (0 * TILE_SIZE * TILE_SCALE) + xOffset - 30, (i * TILE_SIZE * TILE_SCALE) + yOffset, TILE_SCALE);
+        drawTile(t, 5, (0 * TILE_SIZE * TILE_SCALE) + xOffset + 220, (i * TILE_SIZE * TILE_SCALE) + yOffset, TILE_SCALE);
+    }
 }
 
-void drawMenu()
+void drawCursor(Cursor_t c, SDL_Texture *t)
 {
-    drawString("Connect Four", 50);
-    drawString("Start?", 150);
-}
-
-void drawMovement()
-{
-    
+    drawTile(t, c.imgIndex, c.x, c.y, TILE_SCALE);
 }

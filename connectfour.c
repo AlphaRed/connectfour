@@ -28,6 +28,16 @@ int main(int argc, char *args[])
     setupFontTiles(fontTiles, FONT_NUM); // move this?
     setupTiles(tileIndex, TILE_NUM);
 
+    Cursor_t menuCursor;
+    menuCursor.imgIndex = 4;
+    menuCursor.x = 5;
+    menuCursor.y = 305;
+
+    Cursor_t gameCursor;
+    gameCursor.imgIndex = 3;
+    gameCursor.x = 150;
+    gameCursor.y = 90;
+
     int quit = 1;
     SDL_Event e;
     int current_ticks;
@@ -40,14 +50,14 @@ int main(int argc, char *args[])
         current_ticks = SDL_GetTicks();
 
         // Input
-        SDL_PollEvent(&e);
+        SDL_WaitEvent(&e); // seems to work better than PollEvent
         if(gs == GAME)
         {
-            quit = checkGameEvents(e);
+            quit = checkGameEvents(e, &gameCursor);
         }
         else if(gs == MENU)
         {
-            quit = checkMenuEvents(e);
+            quit = checkMenuEvents(e, &menuCursor);
             if(quit == 2)
             {
                 gs = GAME;
@@ -59,6 +69,11 @@ int main(int argc, char *args[])
         // Logic
         if(gs == GAME)
         {
+            checkGCursorBounds(&gameCursor);
+        }
+        else if(gs == MENU)
+        {
+            checkMCursorBounds(&menuCursor);
         }
 
         // Render
@@ -68,12 +83,13 @@ int main(int argc, char *args[])
         {
             blitImage(bg, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 1); // clear bg to black      
             drawBoard(tiles);
-            //drawMapCursor(c.x, c.y, cam.offsetX, cam.offsetY, c.img); // draw cursor after map
+            drawCursor(gameCursor, tiles);
         }
         else if(gs == MENU)
         {
             blitImage(bg, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 1); // clear bg to black
-            drawMenu();
+            drawMenu(tiles);
+            drawCursor(menuCursor, tiles);
         }
 
         drawFPS(fps_counter);

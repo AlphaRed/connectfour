@@ -1,7 +1,7 @@
 #include"common.h"
 #include "events.h"
 
-int checkGameEvents(SDL_Event e)
+int checkGameEvents(SDL_Event e, Cursor_t *c)
 {
     if(e.type == SDL_QUIT)
         return 0;
@@ -9,20 +9,16 @@ int checkGameEvents(SDL_Event e)
     {
         switch(e.key.keysym.sym)
         {
-            case SDLK_w:
-                //moveCursor(UP, c);
+            case SDLK_ESCAPE:
+                return 0;
                 break;
-            case SDLK_s:
-                //moveCursor(DOWN, c);
+            case SDLK_LEFT:
+                c->x -= 32;
                 break;
-            case SDLK_a:
-                //moveCursor(LEFT, c);
-                break;
-            case SDLK_d:
-                //moveCursor(RIGHT, c);
+            case SDLK_RIGHT:
+                c->x += 32;
                 break;
             case SDLK_SPACE:
-                // select mech?
                 break;
             default:
                 break;
@@ -31,7 +27,7 @@ int checkGameEvents(SDL_Event e)
     }
 }
 
-int checkMenuEvents(SDL_Event e)
+int checkMenuEvents(SDL_Event e, Cursor_t *c)
 {
     if(e.type == SDL_QUIT)
         return 0;
@@ -40,7 +36,16 @@ int checkMenuEvents(SDL_Event e)
         switch(e.key.keysym.sym)
         {
             case SDLK_RETURN:
-                return 2; // change this maybe?
+                if(c->y == 305) // Start
+                    return 2;
+                else if(c->y == 355) // Exit
+                    return 0;
+                break;
+            case SDLK_DOWN:
+                c->y += 50;
+                break;
+            case SDLK_UP:
+                c->y -= 50;
                 break;
             default:
                 break;
@@ -49,31 +54,28 @@ int checkMenuEvents(SDL_Event e)
     }
 }
 
-void moveCursor(int dir, MapCursor *c)
+void checkMCursorBounds(Cursor_t *c)
 {
-    switch(dir)
+    // wraps the cursor around the menu
+    if(c->y > 355) // 305 + 50
     {
-        case UP:
-            c->y -= 1;
-            if(c->y < 0)
-                c->y = 0;
-            break;
-        case LEFT:
-            c->x -= 1;
-            if(c->x < 0)
-                c->x = 0;
-            break;
-        case DOWN:
-            c->y += 1;
-            if(c->y > MAX_MAP_SIZE - 1)
-                c->y = MAX_MAP_SIZE - 1;
-            break;
-        case RIGHT:
-            c->x += 1;
-            if(c->x > MAX_MAP_SIZE - 1)
-                c->x = MAX_MAP_SIZE - 1;
-            break;
-        default:
-            break;
+        c->y = 305;
+    }   
+    else if(c->y < 305)
+    {
+        c->y = 355;
+    }
+}
+
+void checkGCursorBounds(Cursor_t *c)
+{
+    // wraps the cursor around the board
+    if(c->x > 342)
+    {
+        c->x = 150;
+    }   
+    else if(c->x < 150)
+    {
+        c->x = 342;
     }
 }
