@@ -9,6 +9,7 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 Gamestate gs = MENU;
 Turnstate turn;
+int board[7][6];
 // resources
 SDL_Texture *bg;
 SDL_Texture *tiles;
@@ -38,11 +39,23 @@ int main(int argc, char *args[])
     gameCursor.x = 150;
     gameCursor.y = 90;
 
+    for(int i = 0; i < 6; i++) // clear board it for good measure
+    {
+        for(int j = 0; j < 7; j++)
+        {
+            board[j][i] = 0;
+        }
+    }
+
     int quit = 1;
     SDL_Event e;
     int current_ticks;
     int fps_counter = 0;
     int renderTicks = 0;
+
+    // for testing purposes
+    //board[0][1] = 1;
+    //board[0][2] = 2;
 
     // Game loop
     while(quit)
@@ -61,8 +74,7 @@ int main(int argc, char *args[])
             if(quit == 2)
             {
                 gs = GAME;
-                // maybe add a new function to setup variables for start of game
-                turn = P_MOVE;
+                turn = PLAYER; // start as the player for now...
             }     
         }
 
@@ -84,6 +96,8 @@ int main(int argc, char *args[])
             blitImage(bg, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 1); // clear bg to black      
             drawBoard(tiles);
             drawCursor(gameCursor, tiles);
+            drawTurn(turn);
+            drawPieces(board, tiles);
         }
         else if(gs == MENU)
         {

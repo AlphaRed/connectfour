@@ -11,7 +11,3 @@ void setupTiles(SDL_Rect t[], int num)
         t[i].h = TILE_SIZE;
     }
 }
-
-// tile loading
-
-// draw map function

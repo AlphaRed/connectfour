@@ -19,6 +19,8 @@ int checkGameEvents(SDL_Event e, Cursor_t *c)
                 c->x += 32;
                 break;
             case SDLK_SPACE:
+                setPiece(board, c);
+                changeTurn(&turn);
                 break;
             default:
                 break;
@@ -78,4 +80,19 @@ void checkGCursorBounds(Cursor_t *c)
     {
         c->x = 342;
     }
+}
+
+void setPiece(int array[7][6], Cursor_t *c)
+{
+    // find where the cursor is
+    // check the lowest free space in the column
+    // set the free space
+}
+
+void changeTurn(Turnstate *t)
+{
+    if(*t == PLAYER)
+        *t = CPU;
+    else if(*t == CPU)
+        *t = PLAYER;
 }

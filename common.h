@@ -18,7 +18,7 @@
 #define TILE_NUM        4 * 4
 
 typedef enum {MENU, GAME} Gamestate;
-typedef enum {P_MOVE, P_ATTACK, CPU_MOVE, CPU_ATTACK} Turnstate; // add in items and other states later on
+typedef enum {PLAYER, CPU} Turnstate; // add in items and other states later on
 
 typedef struct Cursor_t // could maybe make this a generic sprite/obj struct?
 {

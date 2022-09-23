@@ -181,3 +181,36 @@ void drawCursor(Cursor_t c, SDL_Texture *t)
 {
     drawTile(t, c.imgIndex, c.x, c.y, TILE_SCALE);
 }
+
+void drawTurn(Turnstate t)
+{
+    if(t == PLAYER)
+    {
+        drawString("Player's turn", 50, 20);
+    }
+    else if(t == CPU)
+    {
+        drawString("CPU's turn", 50, 20);
+    }
+}
+
+void drawPieces(int array[7][6], SDL_Texture *t)
+{
+    int xOffset = 150;
+    int yOffset = 130;
+
+    for(int i = 0; i < 6; i++)
+    {
+        for(int j = 0; j < 7; j++)
+        {
+            if(array[j][i] == 1) // Player is red
+            {
+                drawTile(t, 1, (j * TILE_SIZE * TILE_SCALE) + xOffset, (i * TILE_SIZE * TILE_SCALE) + yOffset, TILE_SCALE);
+            }
+            else if(array[j][i] == 2) // CPU is yellow
+            {
+                drawTile(t, 2, (j * TILE_SIZE * TILE_SCALE) + xOffset, (i * TILE_SIZE * TILE_SCALE) + yOffset, TILE_SCALE);
+            }
+        }
+    }
+}
