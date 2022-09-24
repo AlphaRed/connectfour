@@ -84,9 +84,43 @@ void checkGCursorBounds(Cursor_t *c)
 
 void setPiece(int array[7][6], Cursor_t *c)
 {
+    int num;
     // find where the cursor is
     // check the lowest free space in the column
     // set the free space
+    switch (c->x)
+    {
+    case FIRST:
+        num = checkColumn(0, array);
+        setRow(0, num);
+        break;
+    case SECOND:
+        num = checkColumn(1, array);
+        setRow(1, num);
+        break;
+    case THIRD:
+        num = checkColumn(2, array);
+        setRow(2, num);
+        break;
+    case FOURTH:
+        num = checkColumn(3, array);
+        setRow(3, num);
+        break;
+    case FIFTH:
+        num = checkColumn(4, array);
+        setRow(4, num);
+        break;
+    case SIXTH:
+        num = checkColumn(5, array);
+        setRow(5, num);
+        break;
+    case SEVENTH:
+        num = checkColumn(6, array);
+        setRow(6, num);
+        break;
+    default:
+        break;
+    }
 }
 
 void changeTurn(Turnstate *t)
@@ -95,4 +129,37 @@ void changeTurn(Turnstate *t)
         *t = CPU;
     else if(*t == CPU)
         *t = PLAYER;
+}
+
+int checkColumn(int n, int array[7][6])
+{
+    int row;
+    for(int i = 0; i < 6; i++)
+    {
+        printf("Checking row %d\n", i);
+        if(array[n][i] != 0)
+        {
+            printf("Row %d is not empty\n", i);
+            row = i - 1;
+            return row;
+        }
+        else
+            row = i;
+    }
+    return row;
+}
+
+void setRow(int n, int r)
+{
+    if(turn == PLAYER)
+        board[n][r] = 1;
+    else if(turn == CPU)
+        board[n][r] = 2;
+}
+
+int checkWin()
+{
+    // check horizontals
+    // check verticals
+    // check diagonals
 }

@@ -1,10 +1,13 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#define UP      0
-#define LEFT    1
-#define DOWN    2
-#define RIGHT   3
+#define FIRST   150
+#define SECOND  150 + 32
+#define THIRD   150 + 32 + 32
+#define FOURTH  150 + 32 + 32 + 32
+#define FIFTH   150 + 32 + 32 + 32 + 32
+#define SIXTH   150 + 32 + 32 + 32 + 32 + 32
+#define SEVENTH 150 + 32 + 32 + 32 + 32 + 32 + 32
 
 extern Turnstate turn;
 extern int board[7][6];
@@ -15,5 +18,7 @@ void checkMCursorBounds(Cursor_t *c);
 void checkGCursorBounds(Cursor_t *c);
 void setPiece(int array[7][6], Cursor_t *c);
 void changeTurn(Turnstate *t);
+int checkColumn(int n, int array[7][6]);
+void setRow(int n, int r);
 
 #endif

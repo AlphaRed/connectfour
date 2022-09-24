@@ -52,10 +52,7 @@ int main(int argc, char *args[])
     int current_ticks;
     int fps_counter = 0;
     int renderTicks = 0;
-
-    // for testing purposes
-    //board[0][1] = 1;
-    //board[0][2] = 2;
+    int win = 0;
 
     // Game loop
     while(quit)
@@ -82,6 +79,7 @@ int main(int argc, char *args[])
         if(gs == GAME)
         {
             checkGCursorBounds(&gameCursor);
+            win = checkWin();
         }
         else if(gs == MENU)
         {
