@@ -10,6 +10,7 @@ SDL_Renderer *renderer;
 Gamestate gs = MENU;
 Turnstate turn;
 int board[7][6];
+int win;
 // resources
 SDL_Texture *bg;
 SDL_Texture *tiles;
@@ -28,6 +29,7 @@ int main(int argc, char *args[])
     loadResources();
     setupFontTiles(fontTiles, FONT_NUM); // move this?
     setupTiles(tileIndex, TILE_NUM);
+    clearBoard();
 
     Cursor_t menuCursor;
     menuCursor.imgIndex = 4;
@@ -39,20 +41,12 @@ int main(int argc, char *args[])
     gameCursor.x = 150;
     gameCursor.y = 90;
 
-    for(int i = 0; i < 6; i++) // clear board it for good measure
-    {
-        for(int j = 0; j < 7; j++)
-        {
-            board[j][i] = 0;
-        }
-    }
-
     int quit = 1;
     SDL_Event e;
     int current_ticks;
     int fps_counter = 0;
     int renderTicks = 0;
-    int win = 0;
+    win = 0;
 
     // Game loop
     while(quit)
@@ -64,6 +58,13 @@ int main(int argc, char *args[])
         if(gs == GAME)
         {
             quit = checkGameEvents(e, &gameCursor);
+            if(quit == 2)
+            {
+                gs = MENU;
+                // reset stuff
+                clearBoard();
+                win = 0;
+            }
         }
         else if(gs == MENU)
         {
@@ -96,6 +97,7 @@ int main(int argc, char *args[])
             drawCursor(gameCursor, tiles);
             drawTurn(turn);
             drawPieces(board, tiles);
+            drawWin(win);
         }
         else if(gs == MENU)
         {

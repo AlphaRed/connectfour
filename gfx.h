@@ -23,5 +23,6 @@ void drawMenu(SDL_Texture *t);
 void drawCursor(Cursor_t c, SDL_Texture *img);
 void drawTurn(Turnstate t);
 void drawPieces(int array[7][6], SDL_Texture *t);
+void drawWin(int n);
 
 #endif

@@ -3,29 +3,52 @@
 
 int checkGameEvents(SDL_Event e, Cursor_t *c)
 {
-    if(e.type == SDL_QUIT)
-        return 0;
-    else if(e.type == SDL_KEYDOWN)
+    if(win == 0)
     {
-        switch(e.key.keysym.sym)
+        if(e.type == SDL_QUIT)
+            return 0;
+        else if(e.type == SDL_KEYDOWN)
         {
-            case SDLK_ESCAPE:
-                return 0;
-                break;
-            case SDLK_LEFT:
-                c->x -= 32;
-                break;
-            case SDLK_RIGHT:
-                c->x += 32;
-                break;
-            case SDLK_SPACE:
-                setPiece(board, c);
-                changeTurn(&turn);
-                break;
-            default:
-                break;
+            switch(e.key.keysym.sym)
+            {
+                case SDLK_ESCAPE:
+                    return 0;
+                    break;
+                case SDLK_LEFT:
+                    c->x -= 32;
+                    break;
+                case SDLK_RIGHT:
+                    c->x += 32;
+                    break;
+                case SDLK_SPACE:
+                    setPiece(board, c);
+                    changeTurn(&turn);
+                    break;
+                case SDLK_RETURN:
+                    debugBoard();
+                    break;
+                default:
+                    break;
+            }
+            return 1;    
         }
-        return 1;    
+    }
+    else
+    {
+        if(e.type == SDL_QUIT)
+            return 0;
+        else if(e.type == SDL_KEYDOWN)
+        {
+            switch(e.key.keysym.sym)
+            {
+                case SDLK_RETURN:
+                    return 2;
+                    break;
+                default:
+                    break;
+            }
+            return 1;
+        }
     }
 }
 
@@ -136,10 +159,10 @@ int checkColumn(int n, int array[7][6])
     int row;
     for(int i = 0; i < 6; i++)
     {
-        printf("Checking row %d\n", i);
+        //printf("Checking row %d\n", i);
         if(array[n][i] != 0)
         {
-            printf("Row %d is not empty\n", i);
+            //printf("Row %d is not empty\n", i);
             row = i - 1;
             return row;
         }
@@ -157,9 +180,418 @@ void setRow(int n, int r)
         board[n][r] = 2;
 }
 
+void debugBoard()
+{
+    for(int i = 0; i < 6; i++) // checks
+    {
+        printf("%d %d %d %d %d %d %d\n", board[0][i], board[1][i], board[2][i], board[3][i], board[4][i], board[5][i],board[6][i]);
+    }
+}
+
 int checkWin()
 {
+    int w = 0;
     // check horizontals
+    for(int i = 0; i < 6; i++)
+    {
+        w = checkHorizontal(i);
+        if(w == 1)
+            return 1;
+        else if(w == 2)
+            return 2;
+    }
+
     // check verticals
+    for(int i = 0; i < 7; i++)
+    {
+        //printf("Checking row -> %d\n", i);
+        w = checkVertical(i);
+        if(w == 1)
+            return 1;
+        else if(w == 2)
+            return 2;
+    }
+
     // check diagonals
+    for(int i = 0; i < 7; i++)
+    {
+        w = checkDiagonalLeft(i);
+        if(w == 1)
+            return 1;
+        else if(w == 2)
+            return 2;
+    }
+
+    for(int i = 0; i < 7; i++)
+    {
+        w = checkDiagonalRight(i);
+        if(w == 1)
+            return 1;
+        else if(w == 2)
+            return 2;
+    }
+    
+    // all else fails
+    return 0;
+}
+
+int checkHorizontal(int n)
+{
+    int count = 0;
+    int token = 1; // set as one to start, doesn't matter really
+
+    for(int i = 0; i < 7; i++)
+    {
+        if(token == board[i][n])
+        {
+            count++;
+        }
+        else
+        {
+            count = 1;
+            token = board[i][n];
+        }
+
+        if(count > 3 & token > 0) // we don't care about empty slots
+        {
+            if(token == 1)
+                return 1;
+            else if(token == 2)
+                return 2;
+        }
+    }
+    return 0;
+}
+
+int checkVertical(int n)
+{
+    int count = 0;
+    int token = 1; // set as one to start, doesn't matter really
+
+    for(int i = 0; i < 6; i++)
+    {
+        if(token == board[n][i])
+        {
+            count++;
+        }
+        else
+        {
+            count = 1;
+            token = board[n][i];
+        }
+
+        if(count > 3) // we don't care about empty slots
+        {
+            if(token == 1)
+                return 1;
+            else if(token == 2)
+                return 2;
+        }
+    }
+    return 0;
+}
+
+int checkDiagonalLeft(int n) // so disgusting, don't look please
+{
+    int count = 0;
+    int token = 1; // set as one to start, doesn't matter really
+
+    if(n == 0)
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            if(token == board[i][2 + i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[i][2 + i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    else if(n == 1)
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            if(token == board[i][1 + i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[i][1 + i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    else if(n == 2)
+    {
+        for(int i = 0; i < 6; i++)
+        {
+            if(token == board[i][i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[i][i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    else if(n == 3)
+    {
+        for(int i = 0; i < 6; i++)
+        {
+            if(token == board[1 + i][i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[1 + i][i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    else if(n == 4)
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            if(token == board[2 + i][i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[2 + i][i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    else if (n == 5)
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            if(token == board[3 + i][i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[3 + i][i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+int checkDiagonalRight(int n) // so disgusting, don't look please
+{
+    int count = 0;
+    int token = 1; // set as one to start, doesn't matter really
+
+    if(n == 0)
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            if(token == board[i][3 - i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[i][3 - i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    else if(n == 1)
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            if(token == board[i][4 - i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[i][4 - i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    else if(n == 2)
+    {
+        for(int i = 0; i < 6; i++)
+        {
+            if(token == board[i][5 - i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[i][5 - i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    else if(n == 3)
+    {
+        for(int i = 0; i < 6; i++)
+        {
+            if(token == board[i + 1][5 - i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[i + 1][5 - i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    else if(n == 4)
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            if(token == board[i + 2][5 - i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[i + 2][5 - i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    else if (n == 5)
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            if(token == board[i + 3][5 - i])
+            {
+                count++;
+            }
+            else
+            {
+                count = 1;
+                token = board[i + 3][5 - i];
+            }
+
+            if(count > 3) // we don't care about empty slots
+            {
+                if(token == 1)
+                    return 1;
+                else if(token == 2)
+                    return 2;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+void clearBoard()
+{
+    for(int i = 0; i < 6; i++) // clear board it for good measure
+    {
+        for(int j = 0; j < 7; j++)
+        {
+            board[j][i] = 0;
+        }
+    }
 }

@@ -214,3 +214,17 @@ void drawPieces(int array[7][6], SDL_Texture *t)
         }
     }
 }
+
+void drawWin(int n)
+{
+    if(n == 1)
+    {
+        drawString("Player wins!", 50, 20);
+    }
+    else if(n == 2)
+    {
+        drawString("CPU wins!", 50, 20);
+    }
+    else
+        return;
+}
