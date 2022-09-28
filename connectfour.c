@@ -9,7 +9,7 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 Gamestate gs = MENU;
 Turnstate turn;
-int board[7][6];
+int board[BOARD_WIDTH][BOARD_HEIGHT];
 int win;
 // resources
 SDL_Texture *bg;

@@ -16,6 +16,8 @@
 #define MAX_MAP_SIZE    10
 #define MAX_MAP_HEIGHT  3
 #define TILE_NUM        4 * 4
+#define BOARD_WIDTH     7
+#define BOARD_HEIGHT    6
 
 typedef enum {MENU, GAME} Gamestate;
 typedef enum {PLAYER, CPU} Turnstate; // add in items and other states later on

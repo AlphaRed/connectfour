@@ -21,8 +21,8 @@ int checkGameEvents(SDL_Event e, Cursor_t *c)
                     c->x += 32;
                     break;
                 case SDLK_SPACE:
-                    setPiece(board, c);
-                    changeTurn(&turn);
+                    if(setPiece(board, c) > 0)
+                        changeTurn(&turn);
                     break;
                 case SDLK_RETURN:
                     debugBoard();
@@ -105,9 +105,10 @@ void checkGCursorBounds(Cursor_t *c)
     }
 }
 
-void setPiece(int array[7][6], Cursor_t *c)
+int setPiece(int array[BOARD_WIDTH][BOARD_HEIGHT], Cursor_t *c)
 {
     int num;
+    int check = 0;
     // find where the cursor is
     // check the lowest free space in the column
     // set the free space
@@ -115,35 +116,40 @@ void setPiece(int array[7][6], Cursor_t *c)
     {
     case FIRST:
         num = checkColumn(0, array);
-        setRow(0, num);
+        check = setRow(0, num);
         break;
     case SECOND:
         num = checkColumn(1, array);
-        setRow(1, num);
+        check = setRow(1, num);
         break;
     case THIRD:
         num = checkColumn(2, array);
-        setRow(2, num);
+        check = setRow(2, num);
         break;
     case FOURTH:
         num = checkColumn(3, array);
-        setRow(3, num);
+        check = setRow(3, num);
         break;
     case FIFTH:
         num = checkColumn(4, array);
-        setRow(4, num);
+        check = setRow(4, num);
         break;
     case SIXTH:
         num = checkColumn(5, array);
-        setRow(5, num);
+        check = setRow(5, num);
         break;
     case SEVENTH:
         num = checkColumn(6, array);
-        setRow(6, num);
+        check = setRow(6, num);
         break;
     default:
         break;
     }
+
+    if(check > 0) // check if something was set
+        return 1;
+    else
+        return 0;
 }
 
 void changeTurn(Turnstate *t)
@@ -154,7 +160,7 @@ void changeTurn(Turnstate *t)
         *t = PLAYER;
 }
 
-int checkColumn(int n, int array[7][6])
+int checkColumn(int n, int array[BOARD_WIDTH][BOARD_HEIGHT])
 {
     int row;
     for(int i = 0; i < 6; i++)
@@ -172,12 +178,19 @@ int checkColumn(int n, int array[7][6])
     return row;
 }
 
-void setRow(int n, int r)
+int setRow(int n, int r)
 {
-    if(turn == PLAYER)
-        board[n][r] = 1;
-    else if(turn == CPU)
-        board[n][r] = 2;
+    if(board[n][r] > 0)
+        return 0;
+    else
+    {
+        if(turn == PLAYER)
+            board[n][r] = 1;
+        else if(turn == CPU)
+            board[n][r] = 2;
+        
+        return 1;
+    }
 }
 
 void debugBoard()
@@ -587,9 +600,9 @@ int checkDiagonalRight(int n) // so disgusting, don't look please
 
 void clearBoard()
 {
-    for(int i = 0; i < 6; i++) // clear board it for good measure
+    for(int i = 0; i < BOARD_HEIGHT; i++) // clear board it for good measure
     {
-        for(int j = 0; j < 7; j++)
+        for(int j = 0; j < BOARD_WIDTH; j++)
         {
             board[j][i] = 0;
         }
