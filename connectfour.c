@@ -15,6 +15,7 @@ int win;
 SDL_Texture *bg;
 SDL_Texture *tiles;
 SDL_Texture *font;
+Mix_Music   *menuMusic;
 
 int main(int argc, char *args[])
 {    
@@ -40,6 +41,15 @@ int main(int argc, char *args[])
     gameCursor.imgIndex = 3;
     gameCursor.x = 150;
     gameCursor.y = 90;
+
+    menuMusic = Mix_LoadMUS("sound/nes_07-simple.wav");
+    if(menuMusic == NULL)
+    {
+        printf("Could not load menu music: %s\n", Mix_GetError());
+        SDL_Delay(1000);
+        return 1;
+    }
+    Mix_PlayMusic(menuMusic, -1);
 
     int quit = 1;
     SDL_Event e;
@@ -111,6 +121,7 @@ int main(int argc, char *args[])
         fps_counter = calculateFPS(current_ticks);
     }
 
+    Mix_HaltMusic();
     cleanup();
     return 0;
 }

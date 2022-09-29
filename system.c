@@ -5,7 +5,7 @@
 int initWindow()
 {
     window = NULL;
-    if(SDL_Init(SDL_INIT_VIDEO) < 0)
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
         printf("SDL failed to initialize: %s\n", SDL_GetError());
         return 1;
@@ -36,6 +36,16 @@ int initIMG()
     return 0;
 }
 
+int initAudio()
+{
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    {
+        printf("SDL_mixer library failed to initialize: %s", Mix_GetError());
+        return 1;
+    }
+    return 0;
+}
+
 int initSDL()
 {
     if(initWindow())
@@ -55,6 +65,12 @@ int initSDL()
         printf("initIMG failed.\n");
         return 1;
     }
+
+    if(initAudio())
+    {
+        printf("initAudio failed.\n");
+        return 1;
+    }
     return 0;
 }
 
@@ -62,6 +78,7 @@ void cleanup()
 {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    Mix_Quit();
     IMG_Quit();
     SDL_Quit();
 }
