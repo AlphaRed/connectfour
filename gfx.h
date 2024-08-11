@@ -8,6 +8,8 @@
 
 extern SDL_Renderer *renderer;
 extern SDL_Texture *font;
+extern SDL_Rect fontTiles[FONT_NUM];
+extern SDL_Rect tileIndex[TILE_NUM];
 
 SDL_Texture *loadImage(char *filename);
 void blitImage(SDL_Texture *image, int x, int y, int w, int h, int s);
